@@ -1,5 +1,6 @@
 class Pieces
-    attr_reader :color, :name, :position, :moves
+    attr_reader :color, :name, :moves
+    attr_accessor :position
     def initialize(name,color,position,moves=[])
         @name=name
         @color = color
@@ -10,7 +11,8 @@ class Pieces
 end
 
 class Pawn < Pieces
-    attr_reader :name,:color,:position,:move,:eating
+    attr_reader :name,:color,:move,:eating
+    attr_accessor :position
     def initialize (name,color,position)
         @name=name
         @color = color
