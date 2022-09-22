@@ -120,11 +120,17 @@ class Game
 
     # MOVES
 
+    def piece_selection
+        name=gets.chomp.upcase
+    
+    end
+
     #checking board
 
     def free_space?(position)
         square=finding_the_square(position)
-        square.piece
+        return true if square.piece.nil?
+        false
     end
 
     def finding_the_square(position)
@@ -135,9 +141,13 @@ class Game
         square
     end
 
-    def my_select(ending)
-    
+    def valid?(position)
+        position[0].between?(1,8) && position[1].between?(1,8)
     end
+
+    def getting_the_select(piece,ending)
+    end
+        
 
 
 
