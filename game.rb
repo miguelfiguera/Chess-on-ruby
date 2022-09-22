@@ -124,12 +124,16 @@ class Game
 
     def occupied?(position)
         @squares_instances.each do |sp|
-            return true if sp.position == position
+            return true if sp.position == position && sp.piece != nil
         end
         false 
     end
 
-    def my_select()
+    def occupied?()
+    
+    end
+
+    def my_select(ending)
     
     end
 
