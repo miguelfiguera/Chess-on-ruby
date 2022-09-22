@@ -19,8 +19,8 @@ class Game
 
     #players
     def create_a_player(color)
-    name = gets.chomp 
-    Player.new(name,color)
+        name = gets.chomp 
+        Player.new(name,color)
     end
 
     def swap_player
@@ -99,8 +99,8 @@ class Game
     end
 
     def knight(name,color,position,moves=[[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]])
-    the_knight=Knight.new(name,color,position,moves)
-    the_pushing(the_knight,color)
+        the_knight=Knight.new(name,color,position,moves)
+        the_pushing(the_knight,color)
     end
 
     def bishop(name,color,position,moves=[[1,1],[-1,-1],[-1,1],[1,-1]])
@@ -120,17 +120,19 @@ class Game
 
     # MOVES
 
-    #valid? piece by piece.
+    #checking board
 
-    def occupied?(position)
-        @squares_instances.each do |sp|
-            return true if sp.position == position && sp.piece != nil
-        end
-        false 
+    def free_space?(position)
+        square=finding_the_square(position)
+        square.piece
     end
 
-    def occupied?()
-    
+    def finding_the_square(position)
+        square=nil
+        @squares_instances.each do |sq|
+            square=sq if position == sq.position
+        end
+        square
     end
 
     def my_select(ending)
@@ -138,10 +140,6 @@ class Game
     end
 
 
-
-
-    def free_path_select?
-    end
 
 
     #Finding a Piece
@@ -163,8 +161,6 @@ class Game
 
         return result if !result.nil?
      end
-    end
-
     end
 
     def killing_a_piece(position)
