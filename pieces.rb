@@ -48,9 +48,11 @@ class Pawn < Pieces
 end
 
 class Tower < Pieces
+    #remember de rook (enroque) of the king.
 end
 
 class Knight < Pieces
+    #remember the rook as a possibility.
 end
 
 class Bishop < Pieces

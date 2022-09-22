@@ -4,7 +4,7 @@ require 'pry-byebug'
 
 class Game
 
-    attr_accessor :display, :white_instances, :black_instances, :death_ones, :player1, :player2, :current_player
+    attr_accessor :display, :white_instances, :black_instances, :death_ones, :player1, :player2, :current_player,:current_piece
 
     def initialize
         @display=Display.new
@@ -15,6 +15,7 @@ class Game
         @player1=create_a_player('white')
         @player2=create_a_player('black')
         @current_player=nil
+        @current_piece=nil
     end
 
     #players
@@ -127,6 +128,19 @@ class Game
 
     #checking board
 
+    def checking_board(current_piece,ending)
+        squares_to_check=creating_array_to_check_board(current_piece,ending)
+        result=[]
+        squares_to_check.each do |check|
+            result.push(check) if free_space?(check)
+            result.push(check) if check==ending
+            break if free_space?(check) == false && check != ending
+        end
+        puts "Longest legal move is #{result[-1]}."
+    end
+
+    end
+
     def free_space?(position)
         square=finding_the_square(position)
         return true if square.piece.nil?
@@ -145,8 +159,27 @@ class Game
         position[0].between?(1,8) && position[1].between?(1,8)
     end
 
-    def getting_the_select(piece,ending)
+    def creating_array_to_check_board(piece,ending)
+        moves=piece.moves
+        array=nil
+        moves.each do |move|
+            array=checking_board_array(piece,move,ending) if array.include?(ending)
+        end
+        array
     end
+
+    def checking_board_array(piece,move,ending)
+        array=[piece.position]
+        loop do |result|
+            x=array[-1][0] + move[0]
+            y=array[-1][1] + move[1]
+            break if !valid?([x,y])
+            array.push([x,y])
+            break if [x,y]== ending
+        end
+        array if array.include?(ending)
+    end
+   
         
 
 
