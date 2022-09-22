@@ -122,10 +122,6 @@ class Game
 
     #valid? piece by piece.
 
-    def valid?(position)
-        position[0].between?(1,8) && position[1].between?(1,8)
-    end
-
     def occupied?(position)
         @squares_instances.each do |sp|
             return true if sp.position == position
@@ -133,33 +129,12 @@ class Game
         false 
     end
 
-
-    def pawn_valid?
-    end
-
-    def tower_valid?
-    end
+    def my_select()
     
-    def knight_valid?
     end
 
-    def bishop_valid?
-    end
 
-    def king_valid? 
-    end
 
-    def queen_valid?
-    end
-
-    def free_path_queen?
-    end
-
-    def free_path_tower?
-    end
-
-    def free_path_bishop?
-    end
 
     def free_path_select?
     end
