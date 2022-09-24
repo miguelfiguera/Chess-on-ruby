@@ -122,9 +122,84 @@ class Game
     # MOVES
 
     def piece_selection
+        puts "Select your piece #{@current_player.name}."
         name=gets.chomp.upcase
-    
+        @current_piece=finding_piece(name,@current_player.color)
     end
+
+    def moving_the_piece(current_piece)
+        new_position=gets.chomp.to_i
+        moving_the_piece(current_piece) if !new_position.is_a?(Integer)
+        case 
+        when current_piece.is_a?(Pawn) && current_piece.moved==true
+            #check if the movement is valid
+            #check if the space is free
+            #if both requerimetns before this are true: change the position
+            #else puts "Not a valid movement, try again".
+        when current_piece.is_a?(Pawn) && current_piece.moved==false
+            #check for valid
+            #check free space
+            #if both are fine, change the position
+            #change moved to true
+            #else puts "not valid movement"
+        when current_piece.is_a?(Tower) 
+        when current_piece.is_a?(Tower) && current_piece.moved==false
+        when current_piece.is_a?(Knight)
+        when current_piece.is_a?(Bishop)
+        when current_piece.is_a?(King)
+        when current_piece.is_a?(King) && current_piece.moved==false
+        when current_piece.is_a?(Queen)
+        else
+            puts 'Invalid input, try again'
+        end
+    end
+
+   
+        
+    #Finding a Piece
+    def finding_piece(name,color)
+        arr1=@white_instances
+        arr2=@black_instances
+        result=nil
+
+        if color == 'white'
+            arr1.each do |piece|
+                result = piece if name == piece.name
+            end
+
+        return result if !result.nil?
+
+        elsif color == 'black'
+        arr2.each do |piece|
+            result= piece if name == piece.name
+        end
+
+        return result if !result.nil?
+     end
+    end
+
+    def killing_a_piece(position)
+        finding_piece_for_killing(position)
+    end
+
+    def finding_piece_for_killing(position)
+        arr1= @black_instances 
+        arr2= @white_instances
+        target_index=nil
+        arr1.each_with_index do |piece,index|
+            target_index=index if piece.position == position
+        end
+
+        return target_index if target_index != nil
+
+        arr2.each_with_index do |piece,index|
+            target_index=index if piece.position==position
+        end.
+
+        return target_index if !target_index.nil?
+    end
+
+
 
     #checking board
 
@@ -137,8 +212,6 @@ class Game
             break if free_space?(check) == false && check != ending
         end
         puts "Longest legal move is #{result[-1]}."
-    end
-
     end
 
     def free_space?(position)
@@ -178,53 +251,6 @@ class Game
             break if [x,y]== ending
         end
         array if array.include?(ending)
-    end
-   
-        
-
-
-
-
-    #Finding a Piece
-    def finding_piece(name,color)
-        arr1=@white_instances
-        arr2=@black_instances
-        result=nil
-
-        if color == 'white'
-            arr1.each do |piece|
-                result = piece if name == piece.name
-            end
-
-        return result if !result.nil?
-        elsif color == 'black'
-        arr2.each do |piece|
-            result= piece if name == piece.name
-        end
-
-        return result if !result.nil?
-     end
-    end
-
-    def killing_a_piece(position)
-        finding_piece_for_killing(position)
-    end
-
-    def finding_piece_for_killing(position)
-        arr1= @black_instances 
-        arr2= @white_instances
-        target_index=nil
-        arr1.each_with_index do |piece,index|
-            target_index=index if piece.position == position
-        end
-
-        return target_index if target_index != nil
-
-        arr2.each_with_index do |piece,index|
-            target_index=index if piece.position==position
-        end.
-
-        return target_index if !target_index.nil?
     end
 
     # SQUARES METHODS

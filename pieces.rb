@@ -13,13 +13,11 @@ class Pieces
     end
 
     def is_possible?(position)
-        result=false
         @moves.each do |move|
             x=self.position[0] + moves[0]
             y=self.position[1]+moves[1]
-            result= true if [x,y] == position
+            return true if [x,y] == position
         end
-        result
     end
 
     def inside_board?(position)
@@ -29,7 +27,7 @@ class Pieces
 end
 
 class Pawn < Pieces
-    attr_reader :name,:color,:move,:eating, :starting_move
+    attr_reader :name,:color,:moves,:eating, :starting_moves
     attr_accessor :position, :moved
     def initialize (name,color,position)
         @name=name
@@ -37,12 +35,12 @@ class Pawn < Pieces
         @position = position
         @moves= [0,1]
         @eating=[[1,1],[-1,1]]
-        @starting_move = [0,2]
+        @starting_moves = [[0,2],[0,1]]
         @moved=false
     end
 
-
-    def pawn_valid?
+    def changing_moved
+        @moved = true
     end
 
 end
@@ -53,6 +51,13 @@ end
 
 class Knight < Pieces
     #remember the rook as a possibility.
+
+
+    def check
+    end
+
+    def check_mate
+    end
 end
 
 class Bishop < Pieces
