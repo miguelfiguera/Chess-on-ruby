@@ -64,6 +64,7 @@ class Bishop < Pieces
 end
 
 class King < Pieces
+    #I have to put on starting_moves the rook possibilitie.
 end
 
 class Queen < Pieces
@@ -71,3 +72,6 @@ class Queen < Pieces
     def queen_valid?
     end
 end
+
+
+# I may put enpassant as a boolean variable so other pieces can read it.

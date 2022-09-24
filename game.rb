@@ -146,13 +146,52 @@ class Game
                 puts "Not a valid move, try again."
                 moving_the_piece(current_piece)
                end
-        when current_piece.is_a?(Tower) 
+        when current_piece.is_a?(Tower) && current_piece.moved == true 
+            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+                current_piece.position =new_position
+               else
+                puts "Not a valid move, try again."
+                moving_the_piece(current_piece)
+               end
         when current_piece.is_a?(Tower) && current_piece.moved==false
+            if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
+                current_piece.position =new_position
+                current_piece.changing_moved
+               else
+                puts "Not a valid move, try again."
+                moving_the_piece(current_piece)
+               end
         when current_piece.is_a?(Knight)
+            current_piece.position = new_position if valid?(new_position,current_piece.moves)
         when current_piece.is_a?(Bishop)
-        when current_piece.is_a?(King)
+            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+                current_piece.position =new_position
+               else
+                puts "Not a valid move, try again."
+                moving_the_piece(current_piece)
+               end
+        when current_piece.is_a?(King) && current_piece.moved == true
+            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+                current_piece.position =new_position
+               else
+                puts "Not a valid move, try again."
+                moving_the_piece(current_piece)
+               end
         when current_piece.is_a?(King) && current_piece.moved==false
+            if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
+                current_piece.position =new_position
+                current_piece.changing_moved
+               else
+                puts "Not a valid move, try again."
+                moving_the_piece(current_piece)
+               end
         when current_piece.is_a?(Queen)
+            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+                current_piece.position =new_position
+               else
+                puts "Not a valid move, try again."
+                moving_the_piece(current_piece)
+
         else
             puts 'Invalid input, try again'
         end
