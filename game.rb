@@ -132,16 +132,20 @@ class Game
         moving_the_piece(current_piece) if !new_position.is_a?(Integer)
         case 
         when current_piece.is_a?(Pawn) && current_piece.moved==true
-            #check if the movement is valid
-            #check if the space is free
-            #if both requerimetns before this are true: change the position
-            #else puts "Not a valid movement, try again".
+           if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+            current_piece.position =new_position
+           else
+            puts "Not a valid move, try again."
+            moving_the_piece(current_piece)
+           end
         when current_piece.is_a?(Pawn) && current_piece.moved==false
-            #check for valid
-            #check free space
-            #if both are fine, change the position
-            #change moved to true
-            #else puts "not valid movement"
+            if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
+                current_piece.position =new_position
+                current_piece.changing_moved
+               else
+                puts "Not a valid move, try again."
+                moving_the_piece(current_piece)
+               end
         when current_piece.is_a?(Tower) 
         when current_piece.is_a?(Tower) && current_piece.moved==false
         when current_piece.is_a?(Knight)
@@ -202,6 +206,8 @@ class Game
 
 
     #checking board
+
+    
 
     def checking_board(current_piece,ending)
         squares_to_check=creating_array_to_check_board(current_piece,ending)

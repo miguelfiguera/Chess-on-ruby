@@ -8,22 +8,26 @@ class Pieces
         @moves= moves
     end
 
-    def valid?(position)
+    def valid?(position,moves)
         is_possible?(position) && inside_board?(position)
     end
 
-    def is_possible?(position)
-        @moves.each do |move|
+    def is_possible?(position,moves)
+        moves.each do |move|
             x=self.position[0] + moves[0]
             y=self.position[1]+moves[1]
             return true if [x,y] == position
         end
+        #false?
     end
 
     def inside_board?(position)
         position[0].between?(1,8) && position[1].between?(1,8)
     end
 
+    def changing_moved
+        @moved = true
+    end
 end
 
 class Pawn < Pieces
@@ -37,10 +41,6 @@ class Pawn < Pieces
         @eating=[[1,1],[-1,1]]
         @starting_moves = [[0,2],[0,1]]
         @moved=false
-    end
-
-    def changing_moved
-        @moved = true
     end
 
 end
