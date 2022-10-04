@@ -7,7 +7,6 @@ class Game
     attr_accessor :display, :white_instances, :black_instances, :death_ones, :player1, :player2, :current_player,:current_piece
 
     def initialize
-        @display=Display.new
         @white_instances=[]
         @black_instances=[]
         @squares_instances=[]
@@ -28,7 +27,7 @@ class Game
         @current_player == @player1 ? @current_player=@player2 : @current_player=@player1
     end
 
-    #The pieces...
+    #PIECES
 
     def all_the_pieces
         create_black_pieces
@@ -121,6 +120,7 @@ class Game
 
     # MOVES
 
+
     def piece_selection
         puts "Select your piece #{@current_player.name}."
         name=gets.chomp.upcase
@@ -134,6 +134,7 @@ class Game
         when current_piece.is_a?(Pawn) && current_piece.moved==true
            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
             current_piece.position =new_position
+            current_piece.off_enpassant
            else
             puts "Not a valid move, try again."
             moving_the_piece(current_piece)
@@ -142,6 +143,7 @@ class Game
             if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
                 current_piece.position =new_position
                 current_piece.changing_moved
+                current_piece.on_enpassant
                else
                 puts "Not a valid move, try again."
                 moving_the_piece(current_piece)
@@ -197,9 +199,72 @@ class Game
         end
     end
 
-   
+    #CHECK AND CHECKMATE
+   def check_mate?
+   end
+
+   def check?
+   end
+
+    def check_whites?
+    end
+
+    def check_blacks?
+    end
+
+   #other functions to make check work
+
+   #ENPASSANT
+
+   # CASTLING
+    def castling
+        return if checking_empty_squares(current_player,rook) != true
+        return if checking_castling(king,rook) != true
+        return if 
+    end
+
+    def checking_empty_squares(current_player,rook)
+        case 
+        when current_player.color == 'white' && rook.name == 'T2'
+            arr[[7,1],[6,1]]
+            checking_emptyness_castling(arr)
+        when current_player.color == 'white' && rook.name=='T1'
+            arr=[[2,1],[3,1],[4,1]]          
+            checking_emptyness_castling(arr)
+        when current_player.color == 'black' && rook.name=='T1'
+            arr=[[2,8],[3,8],[4,8]]
+            checking_emptyness_castling(arr)
+        when current_player.color == 'black' && rook.name == 'T2'
+            arr[[7,8],[6,8]]
+            checking_emptyness_castling(arr)
+        end
+    end
+
+
+    def checking_castling(king,rook)
+        return false if king.moved == true || rook.moved==true
+        return true if king.castling == true && rook.castling == true
+    end
+
+    def moving_castling_pieces(king,rook)
+        case
+        when current_player.color == 'white' && rook.name == 'T2'
+            
+        when current_player.color == 'white' && rook.name=='T1'
+        when current_player.color == 'black' && rook.name=='T1'
+        when current_player.color == 'black' && rook.name == 'T2'
+    end
+
+    def checking_emptyness_castling(arr)
+        result = []
+        arr.each do |square|
+            result.push(finding_the_square(square))
+        end
+        return false if result.any?{|sq| sq.position != nil}
+        true
+    end
         
-    #Finding a Piece
+    #FINDING PIECES
     def finding_piece(name,color)
         arr1=@white_instances
         arr2=@black_instances
@@ -244,9 +309,7 @@ class Game
 
 
 
-    #checking board
-
-    
+    #CHECKING BOARD.
 
     def checking_board(current_piece,ending)
         squares_to_check=creating_array_to_check_board(current_piece,ending)
