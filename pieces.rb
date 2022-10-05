@@ -64,7 +64,6 @@ class Tower < Pieces
         @color = color
         @position = position
         @moves= moves
-        @starting_moves = [[3,0],[-2,0]]
         @moved=false
         @castling=true
     #I have to put on starting_moves the rook possibilitie.
@@ -93,7 +92,6 @@ class King < Pieces
         @color = color
         @position = position
         @moves= moves
-        @starting_moves = [[-2,0],[2,0]]
         @moved=false
         @castling=true
         @check=false

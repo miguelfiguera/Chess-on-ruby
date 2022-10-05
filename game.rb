@@ -120,6 +120,22 @@ class Game
 
     # MOVES
 
+    def moves
+        piece_selection
+        if @current_piece.is_a?(King) || @current_piece.is_a?(Tower)
+            puts 'Please selec: castling or move? c/m' if @current_piece.castling == true
+            answer=gets.chomp.downcase
+            castling if answer == 'c'
+            moving_the_piece(@current_piece) if answer == 'm'
+        elsif @current_piece.is_a?(Pawn)
+
+            #insert here the enpassant part.
+
+        else
+            moving_the_piece(@current)
+        end
+    end
+
 
     def piece_selection
         puts "Select your piece #{@current_player.name}."
@@ -128,8 +144,9 @@ class Game
     end
 
     def moving_the_piece(current_piece)
-        new_position=gets.chomp.to_i
-        moving_the_piece(current_piece) if !new_position.is_a?(Integer)
+        puts "Select new position. Example 'x,y' where 'x' & 'y' are integers"
+        new_position = new_position_string
+        moving_the_piece(current_piece) if !new_position.is_a?(array)
         case 
         when current_piece.is_a?(Pawn) && current_piece.moved==true
            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
@@ -199,28 +216,29 @@ class Game
         end
     end
 
-    #CHECK AND CHECKMATE
-   def check_mate?
-   end
-
-   def check?
-   end
-
-    def check_whites?
+    def new_position_string
+        position=gets.chomp
+        integers=position.split(',')
+        final= integers.map!{ |int| int.to_i}
+        final
     end
 
-    def check_blacks?
-    end
 
-   #other functions to make check work
 
    #ENPASSANT
 
    # CASTLING
     def castling
-        return if checking_empty_squares(current_player,rook) != true
-        return if checking_castling(king,rook) != true
-        return if 
+        puts "Select your rook!"
+        rook_name=gets.chomp
+        rook=finding_piece(rook_name,@current_player.color)
+        king = finding_piece('K',@current_player.color)
+        if checking_empty_squares(@current_player,rook) != true || checking_castling(king,rook) != true 
+            puts 'Not a valid move, my friend.'
+            return
+        else
+            moving_castling_pieces(king,rook)
+        end
     end
 
     def checking_empty_squares(current_player,rook)
@@ -249,10 +267,33 @@ class Game
     def moving_castling_pieces(king,rook)
         case
         when current_player.color == 'white' && rook.name == 'T2'
-            
+            king=finding_piece('K',current_player.color)
+            rook=finding_piece('T2',current_player.color)
+            king.position = [7,1]
+            rook.position = [6,1]
+            king.moved = true
+            rook.moved = true
         when current_player.color == 'white' && rook.name=='T1'
+            king=finding_piece('K',current_player.color)
+            rook=finding_piece('T1',current_player.color)
+            king.position = [3,1]
+            rook.position = [4,1]
+            king.moved = true
+            rook.moved = true
         when current_player.color == 'black' && rook.name=='T1'
+            king=finding_piece('K',current_player.color)
+            rook=finding_piece('T1',current_player.color)
+            king.position = [3,1]
+            rook.position = [4,1]
+            king.moved = true
+            rook.moved = true
         when current_player.color == 'black' && rook.name == 'T2'
+            king=finding_piece('K',current_player.color)
+            rook=finding_piece('T2',current_player.color)
+            king.position = [7,1]
+            rook.position = [6,1]
+            king.moved = true
+            rook.moved = true
     end
 
     def checking_emptyness_castling(arr)
@@ -263,6 +304,22 @@ class Game
         return false if result.any?{|sq| sq.position != nil}
         true
     end
+
+    
+    #CHECK AND CHECKMATE
+   def check_mate?
+   end
+
+   def check?
+   end
+
+    def check_whites?
+    end
+
+    def check_blacks?
+    end
+
+   #other functions to make check work
         
     #FINDING PIECES
     def finding_piece(name,color)
