@@ -134,7 +134,12 @@ class Game
             castling if answer == 'c'
             moving_the_piece(@current_piece) if answer == 'm'
         elsif @current_piece.is_a?(Pawn) && checking_for_enpassant(@current_piece.position)
-                pawn_enpassant_eating(position)
+            puts 'Please select, moving or enpassant? m/e.'
+            answer=gets.chomp.downcase
+            if answer=='e'
+                pawn_enpassant_eating(current_piece)
+            else
+                moving_the_piece(@current_piece)
         elsif check?
             @current_piece=finding_piece('K',@current_player.color)
 
@@ -156,6 +161,10 @@ class Game
         case 
         when current_piece.is_a?(Pawn) && current_piece.moved==true
            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+            current_piece.position =new_position
+            current_piece.off_enpassant
+           elsif current_piece.valid?(new_position,current_piece.eating) && checking_board(current_piece,new_position)
+            killing_a_piece(new_position) if !free_space?(new_position)
             current_piece.position =new_position
             current_piece.off_enpassant
            else
@@ -227,6 +236,7 @@ class Game
          end
     end
 
+
     def new_position_string
         position=gets.chomp
         integers=position.split(',')
@@ -237,10 +247,28 @@ class Game
 
    #ENPASSANT
 
-   def pawn_enpassant_eating(position)
-
-
+   def pawn_enpassant_eating(current_piece)
+    new_position = new_position_string
+    eating=which_eating_is?(new_position,current_piece)
+    if eating[0] == -1
+        target= [current_piece.position[0]+eating[0],current_piece.position[1]]
+        killing_a_piece(target)
+        current_piece.position = new_position
+    elsif eating[0]== 1
+        target= [current_piece.position[0]+eating[0],current_piece.position[1]]
+        killing_a_piece(target)
+        current_piece.position = new_position
+    end
    end
+
+   def which_eating_is?(new_position,current_piece)
+    result=nil
+    current_piece.eating.each do |eating|
+       result = eating if eating[0] + current_piece.position[0] == new_position[0]
+    end
+    result
+end
+
  
    #checking conditions for enpassant
 
@@ -467,7 +495,7 @@ class Game
             break if free_space?(check) == false && check != ending
         end
         puts "Longest legal move is #{result[-1]}."
-        result[-1]
+        true if result[-1] == ending
     end
 
     def free_space?(position)
