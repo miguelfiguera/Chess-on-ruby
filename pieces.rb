@@ -39,7 +39,7 @@ class Pawn < Pieces
         @position = position
         @moves= [0,1]
         @eating=[[1,1],[-1,1]]
-        @starting_moves = [[0,2],[0,1]]
+        @starting_moves = [0,2]
         @moved=false
         @enpassant=false
     end

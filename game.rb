@@ -121,18 +121,19 @@ class Game
     # MOVES
 
     def moves
-        piece_selection
-        if @current_piece.is_a?(King) || @current_piece.is_a?(Tower)
-            puts 'Please selec: castling or move? c/m' if @current_piece.castling == true
+        piece_selection unless check?
+        if @current_piece.is_a?(King) && @current_piece.castling == true
+            puts 'Please select: castling or move? c/m'
             answer=gets.chomp.downcase
             castling if answer == 'c'
             moving_the_piece(@current_piece) if answer == 'm'
-        elsif @current_piece.is_a?(Pawn)
-
-            #insert here the enpassant part.
+        elsif @current_piece.is_a?(Pawn) && checking_for_enpassant(@current_piece.position)
+                pawn_enpassant_eating(position)
+        elsif check?
+            @current_piece=finding_piece('K',@current_player.color)
 
         else
-            moving_the_piece(@current)
+            moving_the_piece(@current_piece)
         end
     end
 
@@ -226,6 +227,34 @@ class Game
 
 
    #ENPASSANT
+
+   def pawn_enpassant_eating(position)
+
+
+   end
+ 
+
+   #checking conditions for enpassant
+
+   def checking_for_enpassant(current_piece.position)
+    return true if checking_lateral_pawn_left(position) || checking_lateral_pawn_right(position)
+    false
+   end
+
+   def checking_lateral_pawn_left(position)
+    square1=finding_the_square([position[0]+1,position[1]]) unless square1.nil? || !square1.piece.is_a?(Pawn)
+    pawn1=square1.piece
+    return true if pawn1.enpassant==true
+    false
+   end
+   def checking_lateral_pawn_right(position)
+    square1=finding_the_square([position[0]+1,position[1]]) unless square1.nil? || !square1.piece.is_a?(Pawn)
+    pawn1=square1.piece
+    return true if pawn1.enpassant==true
+    false
+   end
+
+
 
    # CASTLING
     def castling
@@ -381,7 +410,7 @@ class Game
 
     def free_space?(position)
         square=finding_the_square(position)
-        return true if square.piece.nil?
+        return true if square.piece==nil
         false
     end
 
@@ -399,7 +428,7 @@ class Game
 
     def creating_array_to_check_board(piece,ending)
         moves=piece.moves
-        array=nil
+        array=[]
         moves.each do |move|
             array=checking_board_array(piece,move,ending) if array.include?(ending)
         end
@@ -447,4 +476,10 @@ class Game
         end
     end
 
+    #SAVING GAME methods 
+
+
+    #LOAD GAME methods.
+
+    
 end
