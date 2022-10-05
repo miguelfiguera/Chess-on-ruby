@@ -56,6 +56,21 @@ class Pawn < Pieces
 
 end
 
+class BlackPawn < Pawn
+    attr_reader :name,:color,:moves,:eating, :starting_moves
+    attr_accessor :position, :moved, :enpassant
+    def initialize (name,color,position)
+        @name=name
+        @color = color
+        @position = position
+        @moves= [0,-1]
+        @eating=[[1,-1],[-1,-1]]
+        @starting_moves = [0,-2]
+        @moved=false
+        @enpassant=false
+    end
+end
+
 class Tower < Pieces
     attr_reader :color, :name, :moves
     attr_accessor :position, :castling, :moved

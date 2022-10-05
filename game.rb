@@ -72,6 +72,11 @@ class Game
         the_pushing(the_pawn,color)
     end
 
+    def blackpawn(name,color,position)
+        the_pawn=BlackPawn.new(name,color,position)
+        the_pushing(the_pawn,color)
+    end
+
     def creating_all_pawns(color)
         starting=nil
         ending = nil
@@ -87,7 +92,8 @@ class Game
         loop do |pawn|
             name = letter + starting[0].to_s
             position = starting 
-            pawn(name,color,position)
+            pawn(name,color,position) if color == 'white'
+            blackpawn(name,color,position) if color == 'black'
             break if starting == ending
             starting[0] +=1
         end
@@ -137,7 +143,6 @@ class Game
         end
     end
 
-
     def piece_selection
         puts "Select your piece #{@current_player.name}."
         name=gets.chomp.upcase
@@ -168,6 +173,7 @@ class Game
                end
         when current_piece.is_a?(Tower) && current_piece.moved == true 
             if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+                killing_a_piece(new_position) if !free_space?(new_position)
                 current_piece.position =new_position
                else
                 puts "Not a valid move, try again."
@@ -175,6 +181,7 @@ class Game
                end
         when current_piece.is_a?(Tower) && current_piece.moved==false
             if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
+                killing_a_piece(new_position) if !free_space?(new_position)
                 current_piece.position =new_position
                 current_piece.changing_moved
                else
@@ -183,8 +190,10 @@ class Game
                end
         when current_piece.is_a?(Knight)
             current_piece.position = new_position if valid?(new_position,current_piece.moves)
+            killing_a_piece(new_position) if !free_space?(new_position)
         when current_piece.is_a?(Bishop)
             if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+                killing_a_piece(new_position) if !free_space?(new_position)
                 current_piece.position =new_position
                else
                 puts "Not a valid move, try again."
@@ -192,6 +201,7 @@ class Game
                end
         when current_piece.is_a?(King) && current_piece.moved == true
             if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+                killing_a_piece(new_position) if !free_space?(new_position)
                 current_piece.position =new_position
                else
                 puts "Not a valid move, try again."
@@ -200,6 +210,7 @@ class Game
         when current_piece.is_a?(King) && current_piece.moved==false
             if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
                 current_piece.position =new_position
+                killing_a_piece(new_position) if !free_space?(new_position)
                 current_piece.changing_moved
                else
                 puts "Not a valid move, try again."
@@ -208,13 +219,12 @@ class Game
         when current_piece.is_a?(Queen)
             if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
                 current_piece.position =new_position
+                killing_a_piece(new_position) if !free_space?(new_position)
                else
                 puts "Not a valid move, try again."
                 moving_the_piece(current_piece)
 
-        else
-            puts 'Invalid input, try again'
-        end
+         end
     end
 
     def new_position_string
@@ -225,7 +235,6 @@ class Game
     end
 
 
-
    #ENPASSANT
 
    def pawn_enpassant_eating(position)
@@ -233,14 +242,12 @@ class Game
 
    end
  
-
    #checking conditions for enpassant
 
    def checking_for_enpassant(current_piece.position)
     return true if checking_lateral_pawn_left(position) || checking_lateral_pawn_right(position)
     false
    end
-
    def checking_lateral_pawn_left(position)
     square1=finding_the_square([position[0]+1,position[1]]) unless square1.nil? || !square1.piece.is_a?(Pawn)
     pawn1=square1.piece
@@ -253,7 +260,6 @@ class Game
     return true if pawn1.enpassant==true
     false
    end
-
 
 
    # CASTLING
@@ -286,7 +292,6 @@ class Game
             checking_emptyness_castling(arr)
         end
     end
-
 
     def checking_castling(king,rook)
         return false if king.moved == true || rook.moved==true
@@ -336,7 +341,8 @@ class Game
 
     
     #CHECK AND CHECKMATE
-   def check_mate?
+   
+    def check_mate?
    end
 
    def check?
@@ -350,7 +356,42 @@ class Game
 
    #other functions to make check work
         
-    #FINDING PIECES
+   #PAWN PROMOTION
+
+    def promoting_pawn?(current_piece)
+        return if !current_piece.is_a?(Pawn)
+        return true if current_piece.color == 'white' && current_piece.position[1] = 8
+        return true if current_piece.color == 'black' && current_piece.position[1] = 1
+        false
+    end
+
+    def selecting_promotion(current_piece)
+        valid_answers=['q','t','k','b']
+        puts 'Select your promotion: T for Rook, K for knight, B for bishop, Q for Queen.'
+        puts 'Your Promoted Pawn will conserve his name.'
+        answer=gets.chomp.downcase
+        if !valid_answers.include?(answer)
+            puts "Invalid answer, try again."
+            answer=gets.chomp.downcase
+        end
+
+        case
+        when answer='t'
+            new_piece = tower(current_piece.name,@current_player.color,@current_piece.position)
+            new_piece.changing_moved
+        when answer='k'
+            new_piece= knight(current_piece.name,@current_player.color,@current_piece.position)
+        when answer='b'
+            new_piece=bishop(current_piece.name,@current_player.color,@current_piece.position)
+        when answer='q'
+            new_piece=queen(current_piece.name,@current_player.color,@current_piece.position)
+        end
+
+        erasing_a_piece(@current_piece)
+        current_piece = new_piece
+    end
+
+    #FINDING PIECES / Killing Pieces
     def finding_piece(name,color)
         arr1=@white_instances
         arr2=@black_instances
@@ -372,11 +413,31 @@ class Game
      end
     end
 
-    def killing_a_piece(position)
-        finding_piece_for_killing(position)
+    def finding_piece_by_square(ending_position)
+        square=finding_the_square(ending_position)
+        piece=square.piece
+        piece
     end
 
-    def finding_piece_for_killing(position)
+    def erasing_a_piece(the_piece)
+        target_index=finding_piece_index(the_piece.position)
+        @white_instances.deleted_at(target_index) if the_piece.color == 'white'
+        @black_instances.deleted_at(target_index) if the_piece.color == 'black'
+        @current_piece.position=nil
+        @current_piece=nil
+    end
+
+    def killing_a_piece(position)
+        target_index=finding_piece_index(position)
+        target_for_confirmation=finding_piece_by_square(position)
+        return if @current_piece.color == target_for_confirmation.color
+        @white_instances.deleted_at(target_index) if @current_player.color == 'black'
+        @black_instances.deleted_at(target_index) if @current_player.color == 'white'
+        target_for_confirmation.position==nil
+        @death_ones<<target_for_confirmation
+    end
+
+    def finding_piece_index(position)
         arr1= @black_instances 
         arr2= @white_instances
         target_index=nil
@@ -394,7 +455,6 @@ class Game
     end
 
 
-
     #CHECKING BOARD.
 
     def checking_board(current_piece,ending)
@@ -403,9 +463,11 @@ class Game
         squares_to_check.each do |check|
             result.push(check) if free_space?(check)
             result.push(check) if check==ending
+            break if check==ending
             break if free_space?(check) == false && check != ending
         end
         puts "Longest legal move is #{result[-1]}."
+        result[-1]
     end
 
     def free_space?(position)
