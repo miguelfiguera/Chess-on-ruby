@@ -12,9 +12,10 @@ class Pieces
         is_possible?(position) && inside_board?(position)
     end
 
-    def is_possible?(position,moves)
+    def is_possible?(position)
+        moves = self.moves
         moves.each do |move|
-            x=self.position[0] + moves[0]
+            x=self.position[0] +moves[0]
             y=self.position[1]+moves[1]
             return true if [x,y] == position
         end
@@ -28,6 +29,7 @@ class Pieces
     def changing_moved
         @moved = true
     end
+
 end
 
 class Pawn < Pieces
@@ -86,14 +88,6 @@ class Tower < Pieces
 end
 
 class Knight < Pieces
-    #remember the rook as a possibility.
-
-
-    def check
-    end
-
-    def check_mate
-    end
 end
 
 class Bishop < Pieces
@@ -111,6 +105,10 @@ class King < Pieces
         @castling=true
         @check=false
     #I have to put on starting_moves the rook possibilitie.
+    end
+
+    def check_on_off
+        @check== true ? @check= false : @check = true
     end
 end
 

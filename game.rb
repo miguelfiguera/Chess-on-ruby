@@ -371,10 +371,19 @@ end
     #CHECK AND CHECKMATE
    
     def check_mate?
-   end
+    end
 
-   def check?
-   end
+    def check?()
+
+
+        #use the checkboard method to see if any of the instances puts any king on danger.
+    end
+
+    def invalid_move_check(new_position)
+        #check if the kings new position puts him on check.
+        #if it does, then declare an invalid move.
+        #if check plus all moves are invalid...call checkmate.
+    end
 
     def check_whites?
     end
@@ -382,7 +391,30 @@ end
     def check_blacks?
     end
 
-   #other functions to make check work
+    def kings_valid_moves
+        result=[]
+        current_piece=finding_piece('K',@current_player.color)
+        current_piece.moves.each do |move|
+            x= move[0]+current_piece.position[0]
+            y= move[1]+current_piece.position[1]
+            result<<sq=finding_the_square([x,y]) if sq.piece == nil || sq.piece.color != current_piece.color
+        end
+        result
+    end
+
+    def checking_king_positions
+        king_possibilities=kings_valid_moves(@current_piece)
+
+
+    end
+
+    def checking_pieces_for_check
+    @current_player.color == 'black' ? array=@white_instances : array=@black_instances
+    array.each do
+
+
+    end
+
         
    #PAWN PROMOTION
 
@@ -565,6 +597,12 @@ end
             end
         end
     end
+
+
+    #TURNS
+    def turns 
+    end
+
 
     #SAVING GAME methods 
 
