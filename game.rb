@@ -371,12 +371,17 @@ end
     #CHECK AND CHECKMATE
    
     def check_mate?
+        king=selecting_a_king
+        arr=kings_valid_moves(piece)
+
+
     end
 
-    def check?()
-
-
-        #use the checkboard method to see if any of the instances puts any king on danger.
+    def check?
+        king=selecting_a_king
+        ending=king.position
+        ok = checking_pieces_for_check(king,ending)
+        return true if ok
     end
 
     def invalid_move_check(new_position)
@@ -385,15 +390,10 @@ end
         #if check plus all moves are invalid...call checkmate.
     end
 
-    def check_whites?
-    end
 
-    def check_blacks?
-    end
 
-    def kings_valid_moves
+    def kings_valid_moves(piece)
         result=[]
-        current_piece=finding_piece('K',@current_player.color)
         current_piece.moves.each do |move|
             x= move[0]+current_piece.position[0]
             y= move[1]+current_piece.position[1]
@@ -402,17 +402,22 @@ end
         result
     end
 
-    def checking_king_positions
-        king_possibilities=kings_valid_moves(@current_piece)
-
-
+    def selecting_a_king
+        color = nil
+        @current_player.color = 'black' ? color='white' : color='black'
+        piece = finding_piece('K',color)
+        piece
     end
 
-    def checking_pieces_for_check
-    @current_player.color == 'black' ? array=@white_instances : array=@black_instances
-    array.each do
-
-
+    def checking_pieces_for_check(king,ending)
+        x=nil
+        @current_player.color == 'black' ?  array=@black_instances : array=@white_instances
+        array.each do |pieces|
+            x=checking_board(pieces,final)
+            king.check = true if x == true
+            break if x==true
+        end
+        x
     end
 
         
