@@ -127,7 +127,7 @@ class Game
     # MOVES
 
     def moves
-        piece_selection unless check?
+        piece_selection unless king_in_check?
         if @current_piece.is_a?(King) && @current_piece.castling == true
             puts 'Please select: castling or move? c/m'
             answer=gets.chomp.downcase
@@ -140,12 +140,26 @@ class Game
                 pawn_enpassant_eating(current_piece)
             else
                 moving_the_piece(@current_piece)
-        elsif check?
-            @current_piece=finding_piece('K',@current_player.color)
+        elsif king_in_check?
+        puts "Your king is in check, #{@current_player.name}."
+        puts "Please select a position where your king does not stay in check."
+            loop do
+            piece_selection
+            new_position = new_position_string
+            x=invalid_move_check(new_position)
+            break if x == true
+            end
+
 
         else
             moving_the_piece(@current_piece)
         end
+    end
+
+    def king_in_check?
+        king= finding_piece('K',@current_player.color)
+        return true if king.check == true
+        false
     end
 
     def piece_selection
@@ -155,7 +169,6 @@ class Game
     end
 
     def moving_the_piece(current_piece)
-        puts "Select new position. Example 'x,y' where 'x' & 'y' are integers"
         new_position = new_position_string
         moving_the_piece(current_piece) if !new_position.is_a?(array)
         case 
@@ -238,6 +251,7 @@ class Game
 
 
     def new_position_string
+        puts "Select new position. Example 'x,y' where 'x' & 'y' are integers"
         position=gets.chomp
         integers=position.split(',')
         final= integers.map!{ |int| int.to_i}
@@ -372,9 +386,25 @@ end
    
     def check_mate?
         king=selecting_a_king
-        arr=kings_valid_moves(piece)
+        arr=kings_valid_moves(piece).map {|pos_only| pos_only.position}
+        num=arr.length
+        return true if checking_all_king_moves(king,arr,num)
+        false
+        #array.length = base case
+        # if all the posible moves puts king in check it is a checkmate.
+        #REMEMBER TO ERASE THE KINGS AUTOMATIC SELECTION ON CHECK
+        #THAT WAS A FOOLISH MISTAKE
+    end
 
-
+    def checking_all_king_moves(king,arr,num)
+        result=[]
+        pieces_that_check_king=[]
+        arr.each do |e|
+            x=checking_pieces_for_check(king,e)
+            result<<x if x==true
+            break if result.length == num && result.all?(true)
+        end
+        return true if result.all?(true) && result.length==num
     end
 
     def check?
@@ -385,9 +415,10 @@ end
     end
 
     def invalid_move_check(new_position)
-        #check if the kings new position puts him on check.
-        #if it does, then declare an invalid move.
-        #if check plus all moves are invalid...call checkmate.
+        king=finding_piece('K',@current_player.color)
+        ok = checking_pieces_for_check(king,new_position)
+        puts "INVALID MOVE, PUTS KING IN CHECK, TRY AGAIN" if ok
+        puts "Valid move, proceed." if !ok
     end
 
 
@@ -415,6 +446,7 @@ end
         array.each do |pieces|
             x=checking_board(pieces,final)
             king.check = true if x == true
+            king.check = false if x == false
             break if x==true
         end
         x
@@ -606,6 +638,8 @@ end
 
     #TURNS
     def turns 
+
+
     end
 
 
