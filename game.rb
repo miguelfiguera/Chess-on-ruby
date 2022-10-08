@@ -27,6 +27,13 @@ class Game
         @current_player == @player1 ? @current_player=@player2 : @current_player=@player1
     end
 
+    #GAME PREP
+    def game_prep
+        all_the_pieces 
+        create_squares
+        @current_player = @player1
+    end
+
     #PIECES
 
     def all_the_pieces
@@ -141,16 +148,22 @@ class Game
             else
                 moving_the_piece(@current_piece)
         elsif king_in_check?
-        puts "Your king is in check, #{@current_player.name}."
-        puts "Please select a position where your king does not stay in check."
+            puts "Your king is in check, #{@current_player.name}."
+            puts "Please select a position where your king does not stay in check."
             loop do
+            possible_check_mate=0
             piece_selection
             new_position = new_position_string
-            x=invalid_move_check(new_position)
+            x=invalid_move_check_king(new_position) if @current_piece.is_a?(King)
+            x=invalid_move_check_pieces(new_position) if !@current_piece.is_a?(King)
             break if x == true
+            possible_check_mate += 1
+            check_mate? if possible_check_mate => 3
             end
-
-
+        elsif @current_piece == 'FORFEIT'
+            puts "#{current_player.name} Decides to stop playing..."
+            @current_player == @player1? puts "#{@player2.name} Wins!" : puts "#{@player1.name} Wins!"
+            forfeit
         else
             moving_the_piece(@current_piece)
         end
@@ -165,6 +178,7 @@ class Game
     def piece_selection
         puts "Select your piece #{@current_player.name}."
         name=gets.chomp.upcase
+        return @current_piece=name if name == 'FORFEIT'
         @current_piece=finding_piece(name,@current_player.color)
     end
 
@@ -414,11 +428,25 @@ end
         return true if ok
     end
 
-    def invalid_move_check(new_position)
+    def invalid_move_check_king(new_position)
         king=finding_piece('K',@current_player.color)
         ok = checking_pieces_for_check(king,new_position)
         puts "INVALID MOVE, PUTS KING IN CHECK, TRY AGAIN" if ok
         puts "Valid move, proceed." if !ok
+        return true if !ok
+        return false if ok
+    end
+
+    def invalid_move_check_pieces(new_position)
+        previous=[]
+        previous<<@current_piece.position
+        @current_piece.position = new_position
+        if check? 
+            return true
+        elsif !check?
+            @current_piece.position=previous[0]
+            return false
+        end
     end
 
 
@@ -638,15 +666,54 @@ end
 
     #TURNS
     def turns 
-
-
+     moves
+        check?
+        check_mate?
+        promoting_pawn?
+        swap_player 
+        actualize_piece
     end
 
 
     #SAVING GAME methods 
+def saving_game
+    saved_game = File.new('saved_game.json','w')
+    game_specs = JSON.dump({
+        :white_instances => @white_instances
+        :black_instances => @black_instances
+        :squares_instances => @squares_instances
+        :death_ones => @death_ones
+        :player1 => @player1
+        :player2 => @player2
+        :current_player => @current_player
+        :current_piece => @current_piece
+    })
 
+    saved_game.write(game_specs)
+end
 
     #LOAD GAME methods.
+    def load_game
+        saved_game = File.read('saved_game.jason')
+        loaded=JSON.parse(saved_game)
+        @white_instances=loaded['white_instances']
+        @black_instances=loaded['black_instances']
+        @squares_instances=loaded['squares_instances']
+        @death_ones=loaded['death_ones']
+        @player1=loaded['player1']
+        @player2=loaded['player2']
+        @current_player=loaded['current_player']
+        @current_piece=loaded['current_piece']
+    end
 
+
+
+    #Forfeit
+
+    def forfeit
+        true if @current_piece == 'FORFEIT'
+    end
     
+
+
 end
