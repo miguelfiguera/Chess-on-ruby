@@ -164,10 +164,15 @@ class Game
             puts "#{current_player.name} Decides to stop playing..."
             @current_player == @player1? puts "#{@player2.name} Wins!" : puts "#{@player1.name} Wins!"
             forfeit
+        elsif @current_piece == 'SAVE'
+            saving_game
+        elsif @current_piece == 'LOAD'
+            load_game
         else
             moving_the_piece(@current_piece)
         end
     end
+
 
     def king_in_check?
         king= finding_piece('K',@current_player.color)
@@ -178,7 +183,7 @@ class Game
     def piece_selection
         puts "Select your piece #{@current_player.name}."
         name=gets.chomp.upcase
-        return @current_piece=name if name == 'FORFEIT'
+        return @current_piece=name if name == 'FORFEIT' || name=='SAVE' || name=='LOAD'
         @current_piece=finding_piece(name,@current_player.color)
     end
 
