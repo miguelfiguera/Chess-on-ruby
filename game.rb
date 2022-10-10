@@ -732,6 +732,11 @@ end
     end
 
 
+    # VICTORY
+    def victory
+       true if check_mate?
+    end
+
 
     #Forfeit
 
