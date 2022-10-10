@@ -7,7 +7,7 @@ class Pieces
     def initialize(name,color,position,moves=[])
         @name=name
         @color = color
-        @position = @position
+        @position = position
         @moves= moves
     end
 

@@ -45,9 +45,8 @@ class Game
         puts 'FORFEIT to automatically lose the game...'
         puts 'I hope you enjoy this stuff.'
         create_all_players
-        binding.pry
         all_the_pieces 
-        create_squares
+        create_all_squares
         @current_player = @player1
         print_display
         print @black_instances.length
@@ -59,10 +58,39 @@ class Game
     #DISPLAY
 
     def print_display
+        binding.pry
         actualize_piece
-        @@square_instances.each {|sq| sq.actualize_display}
-        @@square_instances.each {|square| square.print}
+        @squares_instances.each {|sq| sq.actualize_display}
+        @squares_instances.each {|square| square.print}
     end
+
+# SQUARES METHODS
+
+def array_of_positions(board = [], x = 1, y = 1)
+    loop do
+      arr = [x, y]
+      board.push(arr)
+      y += 1 if x == 8
+      x == 8 ? x = 1 : x += 1
+      break if board[-1] == [8, 8]
+      break if board.length > 63
+    end
+    board
+  end
+end
+
+def create_all_squares
+    array = array_of_positions
+    array.each {|position| @squares_instances.push(Squares.new(position))}
+end
+
+def actualize_piece #BFS algorythm
+    queue=@black_instances + @white_instances
+    until queue.empty?
+        piece = queue.shift
+        @squares_instances.each {|sq| sq.piece = piece if piece.position == sq.position}
+    end
+end
 
     #PIECES
 
@@ -86,7 +114,7 @@ class Game
 
     def create_white_pieces
         color = 'white'
-        creating_all_pawns('white')
+        creating_all_pawns(color)
         knight('K2',color,[7,1])
         knight('K1',color,[2,1])
         tower('T2',color,[8,1])
@@ -115,24 +143,19 @@ class Game
     end
 
     def creating_all_pawns(color)
-        starting=nil
-        ending = nil
-        if color == 'black'
-            starting=[1,7]
-            ending=[8,7]
-        elsif color =='white'
-            starting=[1,2]
-            ending = [8,2]
-        end
-        
+        x=1 
         letter= 'P'
         loop do |pawn|
-            name = letter + starting[0].to_s
-            position = starting 
+            if color == 'black'
+                position= [x,7] 
+            elsif color =='white'
+                position=[x,2]
+            end
+            name = letter + x.to_s
             pawn(name,color,position) if color == 'white'
             blackpawn(name,color,position) if color == 'black'
-            break if starting == ending
-            starting[0] +=1
+            break if x==8
+            x+=1
         end
     end
 
@@ -674,34 +697,7 @@ class Game
         array if array.include?(ending)
     end
 
-    # SQUARES METHODS
-
-    def array_of_positions(board = [], x = 1, y = 1)
-            loop do
-              arr = [x, y]
-              board.push(arr)
-              y += 1 if x == 8
-              x == 8 ? x = 1 : x += 1
-              break if board[-1] == [8, 8]
-              break if board.length > 63
-            end
-            board
-          end
-    end
-
-    def create_squares
-        array = array_of_positions
-        array.each {|position| @squares_instances.push(Squares.new(position))}
-    end
-
-    def actualize_piece
-        all_piece_instances=@black_instances + @white_instances
-        @squares_instances.each do |square|
-            all_piece_instances.each do |piece|
-                piece.position == square.position ? square.piece = piece : square.piece = nil
-            end
-        end
-    end
+    
 
 
     #TURNS

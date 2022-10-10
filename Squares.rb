@@ -4,7 +4,7 @@ class Squares
     attr_accessor :piece, :display
     attr_reader :position
 
-    @@squares_instances=[]
+    @@square_instances=[]
 
     def initialize(position,piece=nil)
         @position = position
