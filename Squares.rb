@@ -11,7 +11,7 @@ class Squares
         @@square_instances.push(self)
     end
 
-    def changing_display(square)
+    def changing_display
         case
         when square.piece.is_a?(King)
         @display = "\u265A" if square.piece.color == 'black'
@@ -39,7 +39,30 @@ class Squares
     
 
     def actualize_display
-        @@square_instances.each {|sq| changing_display(sq)}
+        @@square_instances.each {|sq| sq.changing_display}
+    end
+
+
+    def print
+        case 
+        when square.piece == nil && square.position[0].between?(1,7)
+            num = square.position[0] + square.position[1]
+            string = "|   "
+            print string.on_black if num.even? 
+            print string.on_white if num.odd?
+        when square.piece == nil && square.position[0] == 8
+            num = square.position[0] + square.position[1]
+            string = "|   |"
+            print string.on_black if num.even? 
+            print string.on_white if num.odd?
+        when square.piece != nil && square.position[0].between?(1,7)
+            string = "| #{square.display}"
+            print string.on_black if num.even? 
+            print string.on_white if num.odd?
+        when square.piece != nil && square.position[0] == 8
+            string = "| #{square.display}|"
+            print string.on_black if num.even? 
+            print string.on_white if num.odd?
     end
 
 

@@ -1,5 +1,5 @@
 require_relative '../pieces.rb'
-require_relative '../display.rb'
+require_relative '../Squares.rb'
 require 'pry-byebug'
 
 class Game
@@ -29,9 +29,20 @@ class Game
 
     #GAME PREP
     def game_prep
+        puts "Welcome to this chess game."
+        puts 'The rules are the same as ever (if you played chess before)'
+        puts 'if you never played chess, use wikipedia.'
+        puts 'Important commands: SAVE to save the game.'
+        puts 'LOAD to load a previous saved game.'
+        puts 'FORFEIT to automatically lose the game...'
+        puts 'I hope you enjoy this stuff.'
         all_the_pieces 
         create_squares
         @current_player = @player1
+        print @black_instances.length
+        print @player2
+        print @white_instances.length
+        print @player1
     end
 
     #PIECES
