@@ -1,5 +1,5 @@
-require_relative '../pieces.rb'
-require_relative '../Squares.rb'
+require_relative 'pieces.rb'
+require_relative 'Squares.rb'
 require 'pry-byebug'
 
 class Game
@@ -11,13 +11,21 @@ class Game
         @black_instances=[]
         @squares_instances=[]
         @death_ones=[]
-        @player1=create_a_player('white')
-        @player2=create_a_player('black')
+        @player1=nil
+        @player2=nil
         @current_player=nil
         @current_piece=nil
     end
 
     #players
+
+    def create_all_players
+        puts "Select first player's name"
+        @player1=create_a_player('white')
+        puts "Select second player's name"
+        @player2=create_a_player('black')
+    end
+
     def create_a_player(color)
         name = gets.chomp 
         Player.new(name,color)
@@ -36,10 +44,12 @@ class Game
         puts 'LOAD to load a previous saved game.'
         puts 'FORFEIT to automatically lose the game...'
         puts 'I hope you enjoy this stuff.'
+        create_all_players
+        binding.pry
         all_the_pieces 
         create_squares
         @current_player = @player1
-        actualize_display
+        print_display
         print @black_instances.length
         print @player2
         print @white_instances.length
@@ -146,7 +156,7 @@ class Game
         the_pushing(the_k,color)
     end
 
-    def queen(name,color,position,moves=[[0,y],[0,y],[x,0],[x,0],[x,y],[x,y],[x,y],[x,y]])
+    def queen(name,color,position,moves=[[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,-1],[-1,1]])
         the_quinn=Queen.new(name,color,position,moves)
         the_pushing(the_quinn,color)
     end

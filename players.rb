@@ -1,9 +1,10 @@
-# frozen_string_literal: true
+require 'pry-byebug'
 
-class Player
-  def initialize(name, color)
-    @name = name
-    @color = color
-  end
-  attr_reader :name, :color
+
+class Player 
+    def initialize(name,color)
+        @name=name
+        @color=color
+    end
+    attr_reader :name, :color
 end

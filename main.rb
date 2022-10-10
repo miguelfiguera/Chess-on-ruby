@@ -3,7 +3,7 @@
 require_relative 'players.rb'
 require_relative 'pieces.rb'
 require_relative 'game.rb'
-require_relative 'squares.rb'
+require_relative 'Squares.rb'
 require 'colorize'
 require 'pry-byebug'
 
@@ -13,9 +13,8 @@ def play_game
   loop do
     game.turns
     break if game.victory
-    break if game
-             .end
+    break if game.forfeit
   end
-
-  play_game
 end
+
+play_game

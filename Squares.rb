@@ -70,6 +70,5 @@ class Squares
 
 #to print display methods:
 
-
-
+end
 end
