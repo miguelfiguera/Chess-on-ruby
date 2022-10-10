@@ -39,10 +39,19 @@ class Game
         all_the_pieces 
         create_squares
         @current_player = @player1
+        actualize_display
         print @black_instances.length
         print @player2
         print @white_instances.length
         print @player1
+    end
+
+    #DISPLAY
+
+    def print_display
+        actualize_piece
+        @@square_instances.each {|sq| sq.actualize_display}
+        @@square_instances.each {|square| square.print}
     end
 
     #PIECES
@@ -687,7 +696,7 @@ end
         check_mate?
         promoting_pawn?
         swap_player 
-        actualize_piece
+        print_display
     end
 
 
