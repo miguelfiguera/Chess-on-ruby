@@ -1,3 +1,5 @@
+require 'pry-byebug'
+
 class Squares
     attr_accessor :piece, :display
     attr_reader :position

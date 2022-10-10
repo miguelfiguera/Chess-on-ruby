@@ -107,10 +107,10 @@ class Game
     def creating_all_pawns(color)
         starting=nil
         ending = nil
-        if color = 'black'
+        if color == 'black'
             starting=[1,7]
             ending=[8,7]
-        elsif color = 'white'
+        elsif color =='white'
             starting=[1,2]
             ending = [8,2]
         end
@@ -126,7 +126,7 @@ class Game
         end
     end
 
-    def tower(name,color,position,moves=[0,1],[1,0])
+    def tower(name,color,position,moves=[[0,1],[1,0]])
         the_tower=Tower.new(name,color,position,moves)
         the_pushing(the_tower,color)
     end
@@ -167,6 +167,7 @@ class Game
                 pawn_enpassant_eating(current_piece)
             else
                 moving_the_piece(@current_piece)
+            end
         elsif king_in_check?
             puts "Your king is in check, #{@current_player.name}."
             puts "Please select a position where your king does not stay in check."
@@ -178,11 +179,15 @@ class Game
             x=invalid_move_check_pieces(new_position) if !@current_piece.is_a?(King)
             break if x == true
             possible_check_mate += 1
-            check_mate? if possible_check_mate => 3
+            check_mate? if possible_check_mate >= 3
             end
         elsif @current_piece == 'FORFEIT'
             puts "#{current_player.name} Decides to stop playing..."
-            @current_player == @player1? puts "#{@player2.name} Wins!" : puts "#{@player1.name} Wins!"
+            if @current_player == @player1
+                 puts "#{@player2.name} Wins!" 
+            else 
+                puts "#{@player1.name} Wins!"
+            end
             forfeit
         elsif @current_piece == 'SAVE'
             saving_game
@@ -320,12 +325,12 @@ class Game
        result = eating if eating[0] + current_piece.position[0] == new_position[0]
     end
     result
-end
+   end
 
  
    #checking conditions for enpassant
 
-   def checking_for_enpassant(current_piece.position)
+   def checking_for_enpassant(position)
     return true if checking_lateral_pawn_left(position) || checking_lateral_pawn_right(position)
     false
    end
@@ -488,7 +493,7 @@ end
 
     def selecting_a_king
         color = nil
-        @current_player.color = 'black' ? color='white' : color='black'
+        @current_player.color == 'black' ? color='white' : color='black'
         piece = finding_piece('K',color)
         piece
     end
@@ -701,21 +706,21 @@ end
 
 
     #SAVING GAME methods 
-def saving_game
+    def saving_game
     saved_game = File.new('saved_game.json','w')
     game_specs = JSON.dump({
-        :white_instances => @white_instances
-        :black_instances => @black_instances
-        :squares_instances => @squares_instances
-        :death_ones => @death_ones
-        :player1 => @player1
-        :player2 => @player2
-        :current_player => @current_player
+        :white_instances => @white_instances,
+        :black_instances => @black_instances,
+        :squares_instances => @squares_instances,
+        :death_ones => @death_ones,
+        :player1 => @player1,
+        :player2 => @player2,
+        :current_player => @current_player,
         :current_piece => @current_piece
     })
 
     saved_game.write(game_specs)
-end
+    end
 
     #LOAD GAME methods.
     def load_game
@@ -734,7 +739,10 @@ end
 
     # VICTORY
     def victory
-       true if check_mate?
+        if check_mate?
+         puts   "#{@current_player.name} Wins!"
+         true
+        end    
     end
 
 
@@ -745,5 +753,5 @@ end
     end
     
 
-
+end
 end
