@@ -42,7 +42,6 @@ class Squares
 
 
     def print
-        binding.pry
         num = self.position[0] + self.position[1]
         case 
         when self.piece == nil && self.position[0].between?(1,7)
