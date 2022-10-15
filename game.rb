@@ -1,5 +1,6 @@
 require_relative 'pieces.rb'
 require_relative 'Squares.rb'
+require 'colorize'
 require 'pry-byebug'
 
 class Game
@@ -58,9 +59,8 @@ class Game
     #DISPLAY
 
     def print_display
-        binding.pry
         actualize_piece
-        @squares_instances.each {|sq| sq.actualize_display}
+        @squares_instances.each {|sq| sq.changing_display}
         @squares_instances.each {|square| square.print}
     end
 

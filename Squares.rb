@@ -1,4 +1,5 @@
 require 'pry-byebug'
+require 'colorize'
 
 class Squares
     attr_accessor :piece, :display
@@ -15,60 +16,55 @@ class Squares
 
     def changing_display
         case
-        when square.piece.is_a?(King)
-        @display = "\u265A" if square.piece.color == 'black'
-        @display = "\u2654" if square.piece.color == 'white'
-        when square.piece.is_a?(Queen)
-        @display = "\u265B" if square.piece.color == 'black'
-        @display = "\u2655" if square.piece.color == 'white'
-        when square.piece.is_a?(Pawn)
-        @display = "\u265f" if square.piece.color == 'black'
-        @display = "\u2659" if square.piece.color == 'white'
-        when square.piece.is_a?(Tower)
-        @display = "\u265C" if square.piece.color == 'black'
-        @display = "\u2656" if square.piece.color == 'white'
-        when square.piece.is_a?(Bishop)
-        @display = "\u265d" if square.piece.color == 'black'
-        @display = "\u2657" if square.piece.color == 'white'
-        when square.piece.is_a?(Knight)
-        @display = "\u265e" if square.piece.color == 'black'
-        @display = "\u2658" if square.piece.color == 'white'
-        when square.piece == nil
-       @display="   ".on_white if (square.position[0] + square.position[1]).odd?
-       @display="   ".on_black if (square.position[0] + square.position[1]).even?
+        when self.piece.is_a?(King)
+        @display = "\u265A" if self.piece.color == 'black'
+        @display = "\u2654" if self.piece.color == 'white'
+        when self.piece.is_a?(Queen)
+        @display = "\u265B" if self.piece.color == 'black'
+        @display = "\u2655" if self.piece.color == 'white'
+        when self.piece.is_a?(Pawn)
+        @display = "\u265f" if self.piece.color == 'black'
+        @display = "\u2659" if self.piece.color == 'white'
+        when self.piece.is_a?(Tower)
+        @display = "\u265C" if self.piece.color == 'black'
+        @display = "\u2656" if self.piece.color == 'white'
+        when self.piece.is_a?(Bishop)
+        @display = "\u265d" if self.piece.color == 'black'
+        @display = "\u2657" if self.piece.color == 'white'
+        when self.piece.is_a?(Knight)
+        @display = "\u265e" if self.piece.color == 'black'
+        @display = "\u2658" if self.piece.color == 'white'
+        when self.piece == nil
+       @display="   ".on_white if (self.position[0] + self.position[1]).odd?
+       @display="   ".on_black if (self.position[0] + self.position[1]).even?
         end
-    end
-    
-
-    def actualize_display
-        @@square_instances.each {|sq| sq.changing_display}
     end
 
 
     def print
+        binding.pry
+        num = self.position[0] + self.position[1]
         case 
-        when square.piece == nil && square.position[0].between?(1,7)
-            num = square.position[0] + square.position[1]
+        when self.piece == nil && self.position[0].between?(1,7)
             string = "|   "
+            print self.on_black if num.even? 
+            print self.on_white if num.odd?
+        when self.piece == nil && self.position[0] == 8
+            string = "|   |\n"
             print string.on_black if num.even? 
             print string.on_white if num.odd?
-        when square.piece == nil && square.position[0] == 8
-            num = square.position[0] + square.position[1]
-            string = "|   |"
+        when self.piece != nil && self.position[0].between?(1,7)
+            string = "| #{self.display}"
             print string.on_black if num.even? 
             print string.on_white if num.odd?
-        when square.piece != nil && square.position[0].between?(1,7)
-            string = "| #{square.display}"
+        when self.piece != nil && self.position[0] == 8
+            string = "| #{self.display}|\n"
             print string.on_black if num.even? 
             print string.on_white if num.odd?
-        when square.piece != nil && square.position[0] == 8
-            string = "| #{square.display}|"
-            print string.on_black if num.even? 
-            print string.on_white if num.odd?
+        end
     end
 
 
 #to print display methods:
 
-end
 end
