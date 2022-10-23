@@ -15,6 +15,7 @@ def play_game
     game.turns
     break if game.victory
     break if game.forfeit
+    game.swap_player
   end
 end
 

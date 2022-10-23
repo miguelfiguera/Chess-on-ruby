@@ -99,11 +99,9 @@ end
     public
 
     def turns
+        print_display
         moves
-        check?
-        check_mate?
-        promoting_pawn?
-        swap_player 
+        promoting_pawn?(@current_piece)
         print_display
     end
    
@@ -314,48 +312,32 @@ end
         @current_piece=finding_piece(name,@current_player.color)
     end
 
- def moving_the_piece
+ def moving_the_piece(current_piece)
     new_position=new_position_string
+    case
+    when current_piece.is_a?(Pawn)
+        moving_pawn(current_piece,new_position)
+    when current_piece.is_a?(Tower)
+        moving_rook(current_piece,new_position)
+    when current_piece.is_a?(Knight)
+        moving_knight(current_piece,new_position)
+    when current_piece.is_a?(Bishop)
+        moving_bishop(current_piece,new_position)
+    when current_piece.is_a?(King)
+        moving_king(current_piece,new_position)
+    when current_piece.is_a?(Queen)
+        moving_queen(current_piece,new_position)
+    end
  end
 
-
-
     def moving_pawn(current_piece,new_position)
-        puts "Enpassant is possible, do you wish to do it? Y/N" if checking_for_enpassant(current_piece.position)
-        answer= gets.chomp.downcase if checking_for_enpassant(current_piece.position)
-
-        if current_piece.moved == false && answer =='n'
-            moving_pawn_starting(current_piece,new_position)
-        elsif current_piece.moved == true  && answer =='n'
-            moving_pawn_normal(current_piece,new_position)
-        elsif checking_for_enpassant(current_piece.position)
-            pawn_enpassant_eating(current_piece)
-        end
     end
 
     def moving_pawn_starting(current_piece,new_position)
-        if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
-            current_piece.position =new_position
-            current_piece.changing_moved
-            current_piece.on_enpassant
-        else
-            puts "Not a valid move, try again."
-            moving_the_piece(current_piece)
-        end
     end
 
     def moving_pawn_normal(current_piece,new_position)
-        if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
-            current_piece.position =new_position
-            current_piece.off_enpassant
-        else
-            puts "Not a valid move, try again."
-            moving_the_piece(current_piece)
-        end
     end
-
-
-
 
     def moving_rook(current_piece,new_position)
     end
@@ -367,366 +349,16 @@ end
     end
     
     def moving_king(current_piece,new_position)
-        if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
-            current_piece.position =new_position
-            killing_a_piece(new_position) if !free_space?(new_position)
-            current_piece.changing_moved
-        else
-            puts "Not a valid move, try again."
-            moving_the_piece(current_piece)
-        end
     end
 
-    def moving_queen(current_piece,new_position)
-        if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
-            current_piece.position =new_position
-            killing_a_piece(new_position) if !free_space?(new_position)
-           else
-            puts "Not a valid move, try again."
-            moving_the_piece(current_piece)
-     end   
+    def moving_queen(current_piece,new_position) 
     end
 
 
-# I think the problem is in moving the piece...
-
-   def pawn_enpassant_eating(current_piece)
-    new_position = new_position_string
-    eating=which_eating_is?(new_position,current_piece)
-    if eating[0] == -1
-        target= [current_piece.position[0]+eating[0],current_piece.position[1]]
-        killing_a_piece(target)
-        current_piece.position = new_position
-    elsif eating[0]== 1
-        target= [current_piece.position[0]+eating[0],current_piece.position[1]]
-        killing_a_piece(target)
-        current_piece.position = new_position
-    end
-   end
-
-   def which_eating_is?(new_position,current_piece)
-    result=nil
-    current_piece.eating.each do |eating|
-       result = eating if eating[0] + current_piece.position[0] == new_position[0]
-    end
-    result
-   end
-
-
-
-
-   # CASTLING
-    def castling
-        puts "Select your rook!"
-        rook_name=gets.chomp
-        rook=finding_piece(rook_name,@current_player.color)
-        king = finding_piece('K',@current_player.color)
-        if checking_empty_squares(@current_player,rook) != true || checking_castling(king,rook) != true 
-            puts 'Not a valid move, my friend.'
-            return
-        else
-            moving_castling_pieces(king,rook)
-        end
-    end
-
-    def checking_empty_squares(current_player,rook)
-        case 
-        when current_player.color == 'white' && rook.name == 'T2'
-            arr[[7,1],[6,1]]
-            checking_emptyness_castling(arr)
-        when current_player.color == 'white' && rook.name=='T1'
-            arr=[[2,1],[3,1],[4,1]]          
-            checking_emptyness_castling(arr)
-        when current_player.color == 'black' && rook.name=='T1'
-            arr=[[2,8],[3,8],[4,8]]
-            checking_emptyness_castling(arr)
-        when current_player.color == 'black' && rook.name == 'T2'
-            arr[[7,8],[6,8]]
-            checking_emptyness_castling(arr)
-        end
-    end
-
-    def checking_castling(king,rook)
-        return false if king.moved == true || rook.moved==true
-        return true if king.castling == true && rook.castling == true
-    end
-
-    def moving_castling_pieces(king,rook)
-        case
-        when current_player.color == 'white' && rook.name == 'T2'
-            king=finding_piece('K',current_player.color)
-            rook=finding_piece('T2',current_player.color)
-            king.position = [7,1]
-            rook.position = [6,1]
-            king.moved = true
-            rook.moved = true
-        when current_player.color == 'white' && rook.name=='T1'
-            king=finding_piece('K',current_player.color)
-            rook=finding_piece('T1',current_player.color)
-            king.position = [3,1]
-            rook.position = [4,1]
-            king.moved = true
-            rook.moved = true
-        when current_player.color == 'black' && rook.name=='T1'
-            king=finding_piece('K',current_player.color)
-            rook=finding_piece('T1',current_player.color)
-            king.position = [3,1]
-            rook.position = [4,1]
-            king.moved = true
-            rook.moved = true
-        when current_player.color == 'black' && rook.name == 'T2'
-            king=finding_piece('K',current_player.color)
-            rook=finding_piece('T2',current_player.color)
-            king.position = [7,1]
-            rook.position = [6,1]
-            king.moved = true
-            rook.moved = true
-    end
-
-    def checking_emptyness_castling(arr)
-        result = []
-        arr.each do |square|
-            result.push(finding_the_square(square))
-        end
-        return false if result.any?{|sq| sq.position != nil}
-        true
-    end
-
-    
-    #CHECK AND CHECKMATE
    
-    def check_mate?
-        king=selecting_a_king
-        arr=kings_valid_moves(piece).map {|pos_only| pos_only.position}
-        num=arr.length
-        return true if checking_all_king_moves(king,arr,num)
-        false
-        #array.length = base case
-        # if all the posible moves puts king in check it is a checkmate.
-        #REMEMBER TO ERASE THE KINGS AUTOMATIC SELECTION ON CHECK
-        #THAT WAS A FOOLISH MISTAKE
-    end
-
-    def checking_all_king_moves(king,arr,num)
-        result=[]
-        pieces_that_check_king=[]
-        arr.each do |e|
-            x=checking_pieces_for_check(king,e)
-            result<<x if x==true
-            break if result.length == num && result.all?(true)
-        end
-        return true if result.all?(true) && result.length==num
-    end
-
-    def check?
-        king=selecting_a_king
-        ending=king.position
-        ok = checking_pieces_for_check(king,ending)
-        return true if ok
-    end
-
-    def invalid_move_check_king(new_position)
-        king=finding_piece('K',@current_player.color)
-        ok = checking_pieces_for_check(king,new_position)
-        puts "INVALID MOVE, PUTS KING IN CHECK, TRY AGAIN" if ok
-        puts "Valid move, proceed." if !ok
-        return true if !ok
-        return false if ok
-    end
-
-    def invalid_move_check_pieces(new_position)
-        previous=[]
-        previous<<@current_piece.position
-        @current_piece.position = new_position
-        if check? 
-            return true
-        elsif !check?
-            @current_piece.position=previous[0]
-            return false
-        end
-    end
 
 
 
-    def kings_valid_moves(piece)
-        result=[]
-        current_piece.moves.each do |move|
-            x= move[0]+current_piece.position[0]
-            y= move[1]+current_piece.position[1]
-            result<<sq=finding_the_square([x,y]) if sq.piece == nil || sq.piece.color != current_piece.color
-        end
-        result
-    end
-
-    def selecting_a_king
-        color = nil
-        @current_player.color == 'black' ? color='white' : color='black'
-        piece = finding_piece('K',color)
-        piece
-    end
-
-    def checking_pieces_for_check(king,ending)
-        x=nil
-        @current_player.color == 'black' ?  array=@black_instances : array=@white_instances
-        array.each do |pieces|
-            x=checking_board(pieces,final)
-            king.check = true if x == true
-            king.check = false if x == false
-            break if x==true
-        end
-        x
-    end
-
-        
-   #PAWN PROMOTION
-
-    def promoting_pawn?(current_piece)
-        return if !current_piece.is_a?(Pawn)
-        return true if current_piece.color == 'white' && current_piece.position[1] = 8
-        return true if current_piece.color == 'black' && current_piece.position[1] = 1
-        false
-    end
-
-    def selecting_promotion(current_piece)
-        valid_answers=['q','t','k','b']
-        puts 'Select your promotion: T for Rook, K for knight, B for bishop, Q for Queen.'
-        puts 'Your Promoted Pawn will conserve his name.'
-        answer=gets.chomp.downcase
-        if !valid_answers.include?(answer)
-            puts "Invalid answer, try again."
-            answer=gets.chomp.downcase
-        end
-
-        case
-        when answer='t'
-            new_piece = tower(current_piece.name,@current_player.color,@current_piece.position)
-            new_piece.changing_moved
-        when answer='k'
-            new_piece= knight(current_piece.name,@current_player.color,@current_piece.position)
-        when answer='b'
-            new_piece=bishop(current_piece.name,@current_player.color,@current_piece.position)
-        when answer='q'
-            new_piece=queen(current_piece.name,@current_player.color,@current_piece.position)
-        end
-
-        erasing_a_piece(@current_piece)
-        current_piece = new_piece
-    end
-
-    #FINDING PIECES / Killing Pieces
-    def finding_piece(name,color)
-        arr1=@white_instances
-        arr2=@black_instances
-        result=nil
-
-        if color == 'white'
-            arr1.each do |piece|
-                result = piece if name == piece.name
-            end
-
-        return result if !result.nil?
-
-        elsif color == 'black'
-        arr2.each do |piece|
-            result= piece if name == piece.name
-        end
-
-        return result if !result.nil?
-     end
-    end
-
-    def finding_piece_by_square(ending_position)
-        square=finding_the_square(ending_position)
-        piece=square.piece
-        piece
-    end
-
-    def erasing_a_piece(the_piece)
-        target_index=finding_piece_index(the_piece.position)
-        @white_instances.deleted_at(target_index) if the_piece.color == 'white'
-        @black_instances.deleted_at(target_index) if the_piece.color == 'black'
-        @current_piece.position=nil
-        @current_piece=nil
-    end
-
-    def killing_a_piece(position)
-        target_index=finding_piece_index(position)
-        target_for_confirmation=finding_piece_by_square(position)
-        return if @current_piece.color == target_for_confirmation.color
-        @white_instances.deleted_at(target_index) if @current_player.color == 'black'
-        @black_instances.deleted_at(target_index) if @current_player.color == 'white'
-        target_for_confirmation.position==nil
-        @death_ones<<target_for_confirmation
-    end
-
-    def finding_piece_index(position)
-        arr1= @black_instances 
-        arr2= @white_instances
-        target_index=nil
-        arr1.each_with_index do |piece,index|
-            target_index=index if piece.position == position
-        end
-
-        return target_index if target_index != nil
-
-        arr2.each_with_index do |piece,index|
-            target_index=index if piece.position==position
-        end.
-
-        return target_index if !target_index.nil?
-    end
-
-
-    #CHECKING BOARD.
-
-    def checking_board(current_piece,ending)
-        squares_to_check=creating_array_to_check_board(current_piece,ending)
-        result=[]
-        squares_to_check.each do |check|
-            result.push(check) if free_space?(check)
-            result.push(check) if check==ending
-            break if check==ending
-            break if free_space?(check) == false && check != ending
-        end
-        puts "Longest legal move is #{result[-1]}."
-        true if result[-1] == ending
-    end
-
-    def free_space?(position)
-        square=finding_the_square(position)
-        return true if square.piece==nil
-        false
-    end
-
-
-
-    def valid?(position)
-        position[0].between?(1,8) && position[1].between?(1,8)
-    end
-
-    def creating_array_to_check_board(piece,ending)
-        moves=piece.moves
-        array=[]
-        moves.each do |move|
-            array=checking_board_array(piece,move,ending) if array.include?(ending)
-        end
-        array
-    end
-
-    def checking_board_array(piece,move,ending)
-        array=[piece.position]
-        loop do |result|
-            x=array[-1][0] + move[0]
-            y=array[-1][1] + move[1]
-            break if !valid?([x,y])
-            array.push([x,y])
-            break if [x,y]== ending
-        end
-        array if array.include?(ending)
-    end
-
-
-    #SAVING GAME methods 
     def saving_game
     saved_game = File.new('saved_game.json','w')
     game_specs = JSON.dump({
@@ -743,7 +375,6 @@ end
     saved_game.write(game_specs)
     end
 
-    #LOAD GAME methods.
     def load_game
         saved_game = File.read('saved_game.jason')
         loaded=JSON.parse(saved_game)
@@ -756,23 +387,4 @@ end
         @current_player=loaded['current_player']
         @current_piece=loaded['current_piece']
     end
-
-
-    # VICTORY
-    def victory
-        if check_mate?
-         puts   "#{@current_player.name} Wins!"
-         true
-        end    
-    end
-
-
-    #Forfeit
-
-    def forfeit
-        true if @current_piece == 'FORFEIT'
-    end
-    
-
-end
 end
