@@ -4,6 +4,7 @@ require_relative 'players.rb'
 require_relative 'pieces.rb'
 require_relative 'game.rb'
 require_relative 'Squares.rb'
+require_relative 'display.rb'
 require 'colorize'
 require 'pry-byebug'
 

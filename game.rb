@@ -1,5 +1,6 @@
 require_relative 'pieces.rb'
 require_relative 'Squares.rb'
+require_relative 'display.rb'
 require 'colorize'
 require 'pry-byebug'
 
@@ -16,6 +17,7 @@ class Game
         @player2=nil
         @current_player=nil
         @current_piece=nil
+        @display = Display.new
     end
 
     #players
@@ -61,7 +63,7 @@ class Game
     def print_display
         actualize_piece
         @squares_instances.each {|sq| sq.changing_display}
-        @squares_instances.each {|square| square.print}
+    
     end
 
 # SQUARES METHODS
@@ -91,6 +93,17 @@ def actualize_piece #BFS algorythm
         @squares_instances.each {|sq| sq.piece = piece if piece.position == sq.position}
     end
 end
+
+    #TURNS
+    def turns
+        moves
+        check?
+        check_mate?
+        promoting_pawn?
+        swap_player 
+        print_display
+    end
+   
 
     #PIECES
 
@@ -700,15 +713,6 @@ end
     
 
 
-    #TURNS
-    def turns 
-     moves
-        check?
-        check_mate?
-        promoting_pawn?
-        swap_player 
-        print_display
-    end
 
 
     #SAVING GAME methods 

@@ -41,23 +41,24 @@ class Squares
     end
 
 
-    def print
+    def prints
         num = self.position[0] + self.position[1]
+        display = self.display
         case 
         when self.piece == nil && self.position[0].between?(1,7)
             string = "|   "
-            print self.on_black if num.even? 
-            print self.on_white if num.odd?
+            print string.on_black.chomp if num.even? 
+            print string.on_white.chomp if num.odd?
         when self.piece == nil && self.position[0] == 8
             string = "|   |\n"
             print string.on_black if num.even? 
             print string.on_white if num.odd?
         when self.piece != nil && self.position[0].between?(1,7)
-            string = "| #{self.display}"
-            print string.on_black if num.even? 
-            print string.on_white if num.odd?
+            string = "| #{display}"
+            print string.on_black.chomp if num.even? 
+            print string.on_white.chomp if num.odd?
         when self.piece != nil && self.position[0] == 8
-            string = "| #{self.display}|\n"
+            string = "| #{display}|\n"
             print string.on_black if num.even? 
             print string.on_white if num.odd?
         end
