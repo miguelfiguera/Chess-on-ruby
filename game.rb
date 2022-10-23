@@ -99,7 +99,6 @@ end
     public
 
     def turns
-        binding.pry
         moves
         check?
         check_mate?
@@ -204,6 +203,7 @@ end
     # MOVES
 
     def moves
+        #I have to separate all of this on different methods
         piece_selection unless king_in_check?
         if @current_piece.is_a?(King) && @current_piece.castling == true
             puts 'Please select: castling or move? c/m'
@@ -314,7 +314,78 @@ end
         @current_piece=finding_piece(name,@current_player.color)
     end
 
+ def moving_the_piece
+    new_position=new_position_string
+ end
 
+
+
+    def moving_pawn(current_piece,new_position)
+        puts "Enpassant is possible, do you wish to do it? Y/N" if checking_for_enpassant(current_piece.position)
+        answer= gets.chomp.downcase if checking_for_enpassant(current_piece.position)
+
+        if current_piece.moved == false && answer =='n'
+            moving_pawn_starting(current_piece,new_position)
+        elsif current_piece.moved == true  && answer =='n'
+            moving_pawn_normal(current_piece,new_position)
+        elsif checking_for_enpassant(current_piece.position)
+            pawn_enpassant_eating(current_piece)
+        end
+    end
+
+    def moving_pawn_starting(current_piece,new_position)
+        if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
+            current_piece.position =new_position
+            current_piece.changing_moved
+            current_piece.on_enpassant
+        else
+            puts "Not a valid move, try again."
+            moving_the_piece(current_piece)
+        end
+    end
+
+    def moving_pawn_normal(current_piece,new_position)
+        if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+            current_piece.position =new_position
+            current_piece.off_enpassant
+        else
+            puts "Not a valid move, try again."
+            moving_the_piece(current_piece)
+        end
+    end
+
+
+
+
+    def moving_rook(current_piece,new_position)
+    end
+
+    def moving_knight(current_piece,new_position)
+    end
+
+    def moving_bishop(current_piece,new_position)
+    end
+    
+    def moving_king(current_piece,new_position)
+        if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
+            current_piece.position =new_position
+            killing_a_piece(new_position) if !free_space?(new_position)
+            current_piece.changing_moved
+        else
+            puts "Not a valid move, try again."
+            moving_the_piece(current_piece)
+        end
+    end
+
+    def moving_queen(current_piece,new_position)
+        if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
+            current_piece.position =new_position
+            killing_a_piece(new_position) if !free_space?(new_position)
+           else
+            puts "Not a valid move, try again."
+            moving_the_piece(current_piece)
+     end   
+    end
 
 
 # I think the problem is in moving the piece...
@@ -702,85 +773,6 @@ end
         true if @current_piece == 'FORFEIT'
     end
     
-    def moving_the_piece(current_piece)
-        new_position = new_position_string
-        moving_the_piece(current_piece) if !new_position.is_a?(Array)
-        case 
-        when current_piece.is_a?(Pawn) && current_piece.moved==true
-           if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
-            current_piece.position =new_position
-            current_piece.off_enpassant
-           elsif current_piece.valid?(new_position,current_piece.eating) && checking_board(current_piece,new_position)
-            killing_a_piece(new_position) if !free_space?(new_position)
-            current_piece.position =new_position
-            current_piece.off_enpassant
-           else
-            puts "Not a valid move, try again."
-            moving_the_piece(current_piece)
-           end
-        when current_piece.is_a?(Pawn) && current_piece.moved==false
-            if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
-                current_piece.position =new_position
-                current_piece.changing_moved
-                current_piece.on_enpassant
-               else
-                puts "Not a valid move, try again."
-                moving_the_piece(current_piece)
-               end
-        when current_piece.is_a?(Tower) && current_piece.moved == true 
-            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
-                killing_a_piece(new_position) if !free_space?(new_position)
-                current_piece.position =new_position
-               else
-                puts "Not a valid move, try again."
-                moving_the_piece(current_piece)
-               end
-        when current_piece.is_a?(Tower) && current_piece.moved==false
-            if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
-                killing_a_piece(new_position) if !free_space?(new_position)
-                current_piece.position =new_position
-                current_piece.changing_moved
-               else
-                puts "Not a valid move, try again."
-                moving_the_piece(current_piece)
-               end
-        when current_piece.is_a?(Knight)
-            current_piece.position = new_position if valid?(new_position,current_piece.moves)
-            killing_a_piece(new_position) if !free_space?(new_position)
-        when current_piece.is_a?(Bishop)
-            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
-                killing_a_piece(new_position) if !free_space?(new_position)
-                current_piece.position =new_position
-               else
-                puts "Not a valid move, try again."
-                moving_the_piece(current_piece)
-               end
-        when current_piece.is_a?(King) && current_piece.moved == true
-            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
-                killing_a_piece(new_position) if !free_space?(new_position)
-                current_piece.position =new_position
-               else
-                puts "Not a valid move, try again."
-                moving_the_piece(current_piece)
-               end
-        when current_piece.is_a?(King) && current_piece.moved==false
-            if current_piece.valid?(new_position,current_piece.starting_moves) && checking_board(current_piece,new_position)
-                current_piece.position =new_position
-                killing_a_piece(new_position) if !free_space?(new_position)
-                current_piece.changing_moved
-            else
-                puts "Not a valid move, try again."
-                moving_the_piece(current_piece)
-            end
-        when current_piece.is_a?(Queen)
-            if current_piece.valid?(new_position,current_piece.moves) && checking_board(current_piece,new_position)
-                current_piece.position =new_position
-                killing_a_piece(new_position) if !free_space?(new_position)
-               else
-                puts "Not a valid move, try again."
-                moving_the_piece(current_piece)
 
-         end
-    end
 end
 end
