@@ -17,26 +17,26 @@ class Squares
     def changing_display
         case
         when self.piece.is_a?(King)
-        @display = "\u265A" if self.piece.color == 'black'
-        @display = "\u2654" if self.piece.color == 'white'
+        @display = " \u265A " if self.piece.color == 'black'
+        @display = " \u2654 " if self.piece.color == 'white'
         when self.piece.is_a?(Queen)
-        @display = "\u265B" if self.piece.color == 'black'
-        @display = "\u2655" if self.piece.color == 'white'
+        @display = " \u265B " if self.piece.color == 'black'
+        @display = " \u2655 " if self.piece.color == 'white'
         when self.piece.is_a?(Pawn)
-        @display = "\u265f" if self.piece.color == 'black'
-        @display = "\u2659" if self.piece.color == 'white'
+        @display = " \u265f " if self.piece.color == 'black'
+        @display = " \u2659 " if self.piece.color == 'white'
         when self.piece.is_a?(Tower)
-        @display = "\u265C" if self.piece.color == 'black'
-        @display = "\u2656" if self.piece.color == 'white'
+        @display = " \u265C " if self.piece.color == 'black'
+        @display = " \u2656 " if self.piece.color == 'white'
         when self.piece.is_a?(Bishop)
-        @display = "\u265d" if self.piece.color == 'black'
-        @display = "\u2657" if self.piece.color == 'white'
+        @display = " \u265d " if self.piece.color == 'black'
+        @display = " \u2657 " if self.piece.color == 'white'
         when self.piece.is_a?(Knight)
-        @display = "\u265e" if self.piece.color == 'black'
-        @display = "\u2658" if self.piece.color == 'white'
+        @display = " \u265e " if self.piece.color == 'black'
+        @display = " \u2658 " if self.piece.color == 'white'
         when self.piece == nil
-       @display="   ".on_white if (self.position[0] + self.position[1]).odd?
-       @display="   ".on_black if (self.position[0] + self.position[1]).even?
+       @display="     ".on_white if (self.position[0] + self.position[1]).odd?
+       @display="     ".on_black if (self.position[0] + self.position[1]).even?
         end
     end
 
